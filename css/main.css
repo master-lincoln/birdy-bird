@@ -1,0 +1,18 @@
+body {
+  font-family: 'Vollkorn', serif;
+  text-align: center;
+  background: url(../img/subtlenet2.png);
+}
+
+h1 {
+  font-family: 'Press Start 2P', cursive;
+  padding: 1em;
+}
+
+.small {
+  font-size: 0.8em
+}
+
+.right {
+  text-align: right;
+}
