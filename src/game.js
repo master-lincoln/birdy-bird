@@ -2,6 +2,7 @@ define(['bird', 'pipe'], function(bird, Pipe) {
   "use strict";
   
   var offsetX = 640;
+  var groundLevel = 450; 
   
   var atlas = null;
   var atlasMap = {};
@@ -88,6 +89,16 @@ define(['bird', 'pipe'], function(bird, Pipe) {
         collision |= bird.collidesWith(bb);
       });
     });
+    var bbG ={
+      x: offsetX,
+      y: groundLevel,
+      w: game.SIZE[0],
+      h: game.SIZE[1]-groundLevel
+    };
+    if ( bird.collidesWith(bbG) ) {
+      bird.die();
+    }
+    
     bird.drawBB(collision);
   }
   
@@ -99,9 +110,9 @@ define(['bird', 'pipe'], function(bird, Pipe) {
   
   function drawGround(ctx) {
     // TODO let it scroll
-    drawImage("land", 0, 450, ctx);
-    drawImage("land", 288, 450, ctx);
-    drawImage("land", 2*288, 450, ctx);
+    drawImage("land", 0, groundLevel, ctx);
+    drawImage("land", 288, groundLevel, ctx);
+    drawImage("land", 2*288, groundLevel, ctx);
   }
   
   function render(ctx) {

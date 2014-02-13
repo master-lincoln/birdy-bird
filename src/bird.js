@@ -8,6 +8,8 @@ define([], function() {
   var GRAVITY = 30;
   var JUMP_HEIGHT = 60;
   
+  var alive = true;
+  
   var drawB = false;
   
   function init(thegame) {
@@ -17,11 +19,15 @@ define([], function() {
   function tick() {
     // calculate position and velocity using the 'velocity verlet' method
     var timeStep = 1/ game.tickTime;
-    position.y += timeStep * (velocity + timeStep * GRAVITY / 2);
+    position.y += alive ? (timeStep * (velocity + timeStep * GRAVITY/2)) : 0;
+    // keep him below top
+    position.y = position.y < -boundingBox.w/2 ? -boundingBox.w/2 : position.y;
     velocity   += timeStep * GRAVITY;
   }
   
   function jump() {
+    if (!alive)
+      revive();
     velocity = -JUMP_HEIGHT;
   }
   
@@ -65,6 +71,15 @@ define([], function() {
     return collision;
   }
   
+  function die() {
+    alive = false;
+    velocity = 0;
+  }
+  
+  function revive() {
+    alive= true;
+  }
+  
   var draw = (function() {
     // closure to store animation frame index
     var anim = 0;
@@ -95,7 +110,10 @@ define([], function() {
     tick: tick,
     jump: jump,
     collidesWith: collidesWith,
-    drawBB: drawBB
+    die: die,
+    revive: revive,
+    drawBB: drawBB,
+    getPosition: function() { return position; }
   };
   
 });
