@@ -1,7 +1,7 @@
 define([], function() {
   "use strict";
   
-  var lastX = 0;
+  var lastX = -250;
   var pipeDistance = 250;
   
   var Pipe = function(game) {
