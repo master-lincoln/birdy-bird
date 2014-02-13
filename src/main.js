@@ -8,7 +8,8 @@ require([
   var can = document.getElementById('canvas1');
   var ctx = can.getContext('2d');
   can.tabIndex = 1; // quick way to get focus so keypresses register
-  
+  can.focus();
+    
   can.addEventListener('keydown', function(e) {
       if (e.keyCode === 32) { // space
           bird.jump();
