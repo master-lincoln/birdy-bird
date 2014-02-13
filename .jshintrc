@@ -1,0 +1,17 @@
+{
+  "passfail" : false,
+  "maxerr" : 100,
+
+  "browser" : true,
+
+  "predef" : [
+    "require",
+    "define"
+  ],
+
+  "debug" : false,
+  "devel" : true,
+
+  "strict" : true
+
+}
