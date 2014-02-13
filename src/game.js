@@ -5,6 +5,7 @@ define(['bird', 'pipe'], function(bird, Pipe) {
   
   var atlas = null;
   var atlasMap = {};
+  var game = null;
   
   var pipes = [];
   
@@ -30,8 +31,8 @@ define(['bird', 'pipe'], function(bird, Pipe) {
     });
   }
   
-  function init(game) {
-    
+  function init(theGame) {
+    game = theGame;
     var preloadImage = function(resolve, reject) {
       atlas = new Image();
       atlas.src = 'img/orig-atlas.png';
@@ -53,13 +54,33 @@ define(['bird', 'pipe'], function(bird, Pipe) {
 
     bird.init(game);
     pipes.push(new Pipe(game));
+    pipes.push(new Pipe(game));
+    pipes.push(new Pipe(game));
+    pipes.push(new Pipe(game));
+    pipes.push(new Pipe(game));
     
     return Promise.all([promImg, promMap]);
   }
   
+  function addAndRemovePipes() {
+    var lastPipe = pipes[pipes.length-1];
+    // add new pipe at the end
+    if (lastPipe &&
+        lastPipe.getX()+offsetX < game.SIZE[0]) {
+      pipes.push(new Pipe(game));
+    }
+    // remove first pipe if offscreen
+    if (pipes[0] &&
+        pipes[0].getX()+offsetX < -pipes[0].getBoundingBoxes()[0].w) {
+      pipes.shift();
+    }
+  }
+  
   function tick() {
-    offsetX -= 1;
+    offsetX -= game.tickTime/16;
     bird.tick();
+    
+    addAndRemovePipes();
     
     var collision = false;
     pipes.forEach(function(pipe, i) {
@@ -78,9 +99,9 @@ define(['bird', 'pipe'], function(bird, Pipe) {
   
   function drawGround(ctx) {
     // TODO let it scroll
-    drawImage("land", 0, 400, ctx);
-    drawImage("land", 288, 400, ctx);
-    drawImage("land", 2*288, 400, ctx);
+    drawImage("land", 0, 450, ctx);
+    drawImage("land", 288, 450, ctx);
+    drawImage("land", 2*288, 450, ctx);
   }
   
   function render(ctx) {
@@ -102,13 +123,14 @@ define(['bird', 'pipe'], function(bird, Pipe) {
   
   return {
     SIZE : [640,480],
-    // 16 ms (increase to make game faster)
+    
+    // 16 ms (decrease to make game faster)
     tickTime: ~~(1/60 *1000),
     
     // last tick UNIX timestamp 
     lastTickTime : window.performance.now(),
 
-    // how far offoffsetset the canvas is
+    // how far offset the canvas is
     getOffsetX: function() { return offsetX; },
     
     // functions

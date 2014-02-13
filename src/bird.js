@@ -69,20 +69,21 @@ define([], function() {
     // closure to store animation frame index
     var anim = 0;
     var nextAnim = function() {
-      anim = anim > game.tickTime ? 0 : anim+1;
-      return ~~(anim / 12) %3;
+      anim = anim > 3*game.tickTime ? 0 : anim+1;
+      return ~~(anim / 2) %3;
     };
     return function (ctx) {
       var x = position.x-game.getOffsetX();
       var y = position.y;
-      game.drawImage('bird_'+nextAnim(), x, y, ctx);
+      var n = nextAnim();
+      game.drawImage('bird_'+n, x, y, ctx);
       
       // TODO delete this debugging code
       //* draw translucent bounding box
         var bb = boundingBox;
         ctx.beginPath();
         ctx.arc(x+bb.x+bb.w/2, y+bb.y+bb.w/2, bb.w/2, 0, 2*Math.PI, false);
-        ctx.fillStyle = drawB ? "rgba(200, 0, 0, 0.5)" : "rgba(0, 200, 0, 0.5)";
+        ctx.fillStyle = drawB ? "rgba(200, 0, 0, 0.5)" : "rgba(0, 200, 0, 0)";
         ctx.fill();
       //*/
     };
