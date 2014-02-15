@@ -9,7 +9,7 @@ define([], function() {
     this.game = game;
     this.height = 270;
     this.widths = 52;
-    
+    this.passed = false;
     var newX = lastX + pipeDistance;
     lastX = newX;
     this.position = {x:newX, y:Math.random()*250+150};

@@ -1,4 +1,4 @@
-define(['bird', 'pipe'], function(bird, Pipe) {
+define(['bird', 'pipe', 'score'], function(bird, Pipe, score) {
   "use strict";
   
   var offsetX = 0;
@@ -53,6 +53,7 @@ define(['bird', 'pipe'], function(bird, Pipe) {
     var promImg = new Promise(preloadImage);
     var promMap = new Promise(preloadMap);
 
+    score.init(game);
     bird.init(game);
     pipes.push(new Pipe(game));
     pipes.push(new Pipe(game));
@@ -65,7 +66,7 @@ define(['bird', 'pipe'], function(bird, Pipe) {
     var lastPipe = pipes[pipes.length-1];
     // add new pipe at the end
     if (lastPipe &&
-        lastPipe.getX()+offsetX < game.SIZE[0]) {
+        lastPipe.getX()-offsetX < game.SIZE[0]) {
       pipes.push(new Pipe(game));
     }
     // remove first pipe if offscreen
@@ -75,13 +76,7 @@ define(['bird', 'pipe'], function(bird, Pipe) {
     }
   }
   
-  function tick() {
-    var moveX = game.tickTime/16;
-    offsetX += moveX;
-    bird.tick(moveX);
-    
-    addAndRemovePipes();
-    
+  function checkCollisions() {
     var collision = false;
     pipes.forEach(function(pipe, i) {
       pipe.getBoundingBoxes().forEach(function(bb) {
@@ -95,10 +90,30 @@ define(['bird', 'pipe'], function(bird, Pipe) {
       h: game.SIZE[1]-groundLevel
     };
     if ( bird.collidesWith(bbG) || collision ) {
+      score.resetPoints();
       bird.die();
     }
     
     bird.drawBB(collision);
+  }
+  
+  function tick() {
+    var moveX = game.tickTime/16;
+    offsetX += moveX;
+    bird.tick(moveX);
+    
+    addAndRemovePipes();
+    checkCollisions();
+    
+    pipes.forEach(function(pipe) {
+      var pipeRightOuter = pipe.getX()+pipe.getBoundingBoxes()[0].w;
+      if ( !pipe.passed &&
+           pipeRightOuter <bird.getPosition().x) {
+        pipe.passed = true;
+        score.addPoint();
+      }
+    });
+    
   }
   
   function drawBG(ctx) {
@@ -129,6 +144,7 @@ define(['bird', 'pipe'], function(bird, Pipe) {
     bird.draw(ctx);
     
     ctx.restore();
+    score.draw(ctx);
   }
   
   return {
