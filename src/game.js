@@ -22,7 +22,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
   }
   
   function parseAtlasMap(data) {
-    var lines = data.split('\n');
+    var lines = data[0].split('\n');
     lines.forEach(function(line) {
       var elements = line.split(' ');
       atlasMap[elements[0]] = {
@@ -45,10 +45,9 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     var preloadMap = function(resolve, reject) {
       var oReq = new XMLHttpRequest();
       oReq.onload = function(e) { 
-        parseAtlasMap(e.target.response);
-        resolve();
+        resolve(e.target.response);
       };
-      oReq.open("get", "img/orig-atlas.txt", true);
+      oReq.open("get", "img/orig-atlas.txt", false);
       oReq.send();
     };
     
@@ -61,7 +60,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     pipes.push(new Pipe(game));
     pipes.push(new Pipe(game));
     
-    return Promise.all([promImg, promMap]);
+    return Promise.all([promMap, promImg]).then(parseAtlasMap);
   }
   
   function addAndRemovePipes() {
@@ -172,7 +171,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     SIZE : [640,480],
     
     // 16 ms (decrease to make game faster)
-    tickTime: ~~(1/60 *1000),
+    tickTime: ~~(1/30 *1000),
     
     // last tick UNIX timestamp 
     lastTickTime : window.performance.now(),
