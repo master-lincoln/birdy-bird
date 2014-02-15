@@ -10,6 +10,8 @@ define(['bird', 'pipe', 'score'], function(bird, Pipe, score) {
   
   var pipes = [];
   
+  var flash = false;
+  
   function drawImage(name, x, y, ctx) {
     var el = atlasMap[name];
     if (el) {
@@ -89,22 +91,19 @@ define(['bird', 'pipe', 'score'], function(bird, Pipe, score) {
       w: game.SIZE[0],
       h: game.SIZE[1]-groundLevel
     };
+    
+    bird.setTouching(bird.collidesWith(bbG));
+    
     if ( bird.collidesWith(bbG) || collision ) {
       score.resetPoints();
       bird.die();
+      flash = true;
     }
     
     bird.drawBB(collision);
   }
   
-  function tick() {
-    var moveX = game.tickTime/16;
-    offsetX += moveX;
-    bird.tick(moveX);
-    
-    addAndRemovePipes();
-    checkCollisions();
-    
+  function addScoreIfPipePassed() {
     pipes.forEach(function(pipe) {
       var pipeRightOuter = pipe.getX()+pipe.getBoundingBoxes()[0].w;
       if ( !pipe.passed &&
@@ -113,6 +112,16 @@ define(['bird', 'pipe', 'score'], function(bird, Pipe, score) {
         score.addPoint();
       }
     });
+  }
+  
+  function tick() {
+    var moveX = game.tickTime/16;
+    offsetX += moveX;
+    
+    bird.tick(moveX);
+    checkCollisions();
+    addAndRemovePipes();
+    addScoreIfPipePassed();
     
   }
   
@@ -129,22 +138,34 @@ define(['bird', 'pipe', 'score'], function(bird, Pipe, score) {
     drawImage("land", 2*288, groundLevel, ctx);
   }
   
+  var flashScreen = (function() {
+    var frames = 3;
+    return function(ctx) {
+      if (flash) {
+          ctx.beginPath();
+          ctx.rect(0,0,game.SIZE[0], game.SIZE[1]);
+          ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
+          ctx.fill();
+          flash = false;
+      }
+    };
+  })();
+  
   function render(ctx) {
     ctx.save();
-
     drawBG(ctx);
-    drawGround(ctx);
-    
     ctx.translate(-offsetX, 0);
 
-    pipes.forEach(function(pipe, i) {
+    pipes.forEach(function(pipe) {
       pipe.draw(ctx);
     });
     
     bird.draw(ctx);
     
     ctx.restore();
+    drawGround(ctx);
     score.draw(ctx);
+    flashScreen(ctx);
   }
   
   return {

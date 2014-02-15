@@ -9,7 +9,7 @@ define([], function() {
   var JUMP_HEIGHT = 60;
   
   var alive = true;
-  
+  var touchingGround = false;
   var drawB = false;
   
   function init(thegame) {
@@ -17,18 +17,19 @@ define([], function() {
   }
   
   function tick(xMove) {
-    if (alive)
-      position.x += xMove;
-    
-    // calculate position and velocity using the 'velocity verlet' method
-    var timeStep = 1/ game.tickTime;
-    position.y += alive ? (timeStep * (velocity + timeStep * GRAVITY/2)) : 0;
-    // keep him below top
-    position.y = position.y < -boundingBox.w/2 ? -boundingBox.w/2 : position.y;
-    velocity   += timeStep * GRAVITY;
+    position.x += xMove;
+    if (!touchingGround) {
+      // calculate position and velocity using the 'velocity verlet' method
+      var timeStep = 1/ game.tickTime;
+      position.y += alive ? (timeStep * (velocity + timeStep * GRAVITY/2)) : 0;
+      // keep him below top
+      position.y = position.y < -boundingBox.w/2 ? -boundingBox.w/2 : position.y;
+      velocity   += timeStep * GRAVITY;
+    }
   }
   
   function jump() {
+    touchingGround = false;
     if (!alive)
       revive();
     
@@ -76,8 +77,11 @@ define([], function() {
   }
   
   function die() {
-    alive = false;
-    velocity = 0;
+    //alive = false;
+  }
+  
+  function setTouching(touching) {
+    touchingGround = touching;
   }
   
   function revive() {
@@ -98,7 +102,7 @@ define([], function() {
       game.drawImage('bird_'+n, x, y, ctx);
       
       // TODO delete this debugging code
-      //* draw translucent bounding box
+      /* draw translucent bounding box
         var bb = boundingBox;
         ctx.beginPath();
         ctx.arc(x+bb.x+bb.w/2, y+bb.y+bb.w/2, bb.w/2, 0, 2*Math.PI, false);
@@ -115,7 +119,9 @@ define([], function() {
     jump: jump,
     collidesWith: collidesWith,
     die: die,
+    setTouching: setTouching,
     revive: revive,
+    isAlive: function() { return alive; },
     drawBB: drawBB,
     getPosition: function() { return position; }
   };
