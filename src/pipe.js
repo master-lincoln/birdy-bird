@@ -1,7 +1,7 @@
 define([], function() {
   "use strict";
   
-  var lastX = -250;
+  var lastX = 250;
   var pipeDistance = 250;
   
   var Pipe = function(game) {
@@ -19,12 +19,12 @@ define([], function() {
   
   Pipe.prototype.getBoundingBoxes = function() {    
     return [{
-      x: -this.position.x,
+      x: this.position.x,
       y: this.position.y,
       w: this.widths,
       h: this.height
     }, {
-      x: -this.position.x,
+      x: this.position.x,
       y: this.position.y-this.GAP-this.height,
       w: this.widths,
       h: this.height

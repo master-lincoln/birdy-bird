@@ -1,7 +1,7 @@
 define(['bird', 'pipe'], function(bird, Pipe) {
   "use strict";
   
-  var offsetX = 640;
+  var offsetX = 0;
   var groundLevel = 450; 
   
   var atlas = null;
@@ -57,8 +57,6 @@ define(['bird', 'pipe'], function(bird, Pipe) {
     pipes.push(new Pipe(game));
     pipes.push(new Pipe(game));
     pipes.push(new Pipe(game));
-    pipes.push(new Pipe(game));
-    pipes.push(new Pipe(game));
     
     return Promise.all([promImg, promMap]);
   }
@@ -72,14 +70,15 @@ define(['bird', 'pipe'], function(bird, Pipe) {
     }
     // remove first pipe if offscreen
     if (pipes[0] &&
-        pipes[0].getX()+offsetX < -pipes[0].getBoundingBoxes()[0].w) {
+        pipes[0].getX()-offsetX < -pipes[0].getBoundingBoxes()[0].w) {
       pipes.shift();
     }
   }
   
   function tick() {
-    offsetX -= game.tickTime/16;
-    bird.tick();
+    var moveX = game.tickTime/16;
+    offsetX += moveX;
+    bird.tick(moveX);
     
     addAndRemovePipes();
     
@@ -95,7 +94,7 @@ define(['bird', 'pipe'], function(bird, Pipe) {
       w: game.SIZE[0],
       h: game.SIZE[1]-groundLevel
     };
-    if ( bird.collidesWith(bbG) ) {
+    if ( bird.collidesWith(bbG) || collision ) {
       bird.die();
     }
     
@@ -121,7 +120,7 @@ define(['bird', 'pipe'], function(bird, Pipe) {
     drawBG(ctx);
     drawGround(ctx);
     
-    ctx.translate(offsetX, 0);
+    ctx.translate(-offsetX, 0);
 
     pipes.forEach(function(pipe, i) {
       pipe.draw(ctx);

@@ -10,11 +10,20 @@ require([
   can.tabIndex = 1; // quick way to get focus so keypresses register
   can.focus();
     
+  var jumpPressed = false;
+    
   can.addEventListener('keydown', function(e) {
-      if (e.keyCode === 32) { // space
+      if (e.keyCode === 32 && !jumpPressed) { // space
+        jumpPressed = true;
           bird.jump();
       }
   }, false);
+    
+   can.addEventListener('keyup', function(e) {
+    if (e.keyCode === 32) { // space
+        jumpPressed = false;
+    }
+   }, false);
 
   function tickPassed(time) {
     var ticked = (time - game.lastTickTime) >= game.tickTime;

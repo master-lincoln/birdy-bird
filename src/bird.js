@@ -1,7 +1,7 @@
 define([], function() {
   "use strict";
   var game;
-  var position = {x:20, y:0};
+  var position = {x:200, y:0};
   var boundingBox = {x:6, y:10, w:28};
   // current y velocity
   var velocity = 1;
@@ -16,7 +16,10 @@ define([], function() {
     game = thegame;
   }
   
-  function tick() {
+  function tick(xMove) {
+    if (alive)
+      position.x += xMove;
+    
     // calculate position and velocity using the 'velocity verlet' method
     var timeStep = 1/ game.tickTime;
     position.y += alive ? (timeStep * (velocity + timeStep * GRAVITY/2)) : 0;
@@ -28,6 +31,7 @@ define([], function() {
   function jump() {
     if (!alive)
       revive();
+    
     velocity = -JUMP_HEIGHT;
   }
   
@@ -40,7 +44,7 @@ define([], function() {
     // find closests point in rectangle from circle center
     // if distance from there to circle center is small than radius
     // => collision
-    var centerX = game.getOffsetX() + boundingBox.x + boundingBox.w/2;
+    var centerX = position.x + boundingBox.x + boundingBox.w/2;
     var centerY = position.y + boundingBox.y + boundingBox.w/2;
     var collision = false;
     var closestX, closestY;
@@ -88,7 +92,7 @@ define([], function() {
       return ~~(anim / 2) %3;
     };
     return function (ctx) {
-      var x = position.x-game.getOffsetX();
+      var x = position.x;
       var y = position.y;
       var n = nextAnim();
       game.drawImage('bird_'+n, x, y, ctx);
@@ -98,7 +102,7 @@ define([], function() {
         var bb = boundingBox;
         ctx.beginPath();
         ctx.arc(x+bb.x+bb.w/2, y+bb.y+bb.w/2, bb.w/2, 0, 2*Math.PI, false);
-        ctx.fillStyle = drawB ? "rgba(200, 0, 0, 0.5)" : "rgba(0, 200, 0, 0)";
+        ctx.fillStyle = drawB ? "rgba(200, 0, 0, 0.5)" : "rgba(0, 200, 0, 0.5)";
         ctx.fill();
       //*/
     };
