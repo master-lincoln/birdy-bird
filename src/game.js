@@ -1,4 +1,4 @@
-define(['bird', 'pipe', 'score'], function(bird, Pipe, score) {
+define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pipe, score) {
   "use strict";
   
   var offsetX = 0;
