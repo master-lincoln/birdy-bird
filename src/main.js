@@ -12,6 +12,11 @@ require([
     
   var jumpPressed = false;
     
+  var jumpHandler = function() { bird.jump(); };
+    
+  can.addEventListener("touchstart", jumpHandler, false);
+  can.addEventListener("mousedown", jumpHandler, false);
+    
   can.addEventListener('keydown', function(e) {
       if (e.keyCode === 32 && !jumpPressed) { // space
         jumpPressed = true;
