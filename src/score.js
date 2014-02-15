@@ -3,11 +3,14 @@ define([], function() {
   
   var points = 0;
   var maxPoints = 0;
-  
+    
   var game;
   
   function init(theGame) {
     game = theGame;
+    if (localStorage) {
+      maxPoints = localStorage.getItem("maxPoints") || 0;
+    }
   }
   
   function draw(ctx) {
@@ -30,7 +33,14 @@ define([], function() {
   
   function addPoint() {
     points += 1;
-    maxPoints = Math.max(points, maxPoints);
+    if (points > maxPoints) {
+      maxPoints = points;
+      save(maxPoints);
+    }
+  }
+  
+  function save() {
+    localStorage.setItem("maxPoints", maxPoints);
   }
   
   return {
