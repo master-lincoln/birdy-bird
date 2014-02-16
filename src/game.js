@@ -95,22 +95,12 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
         collision |= bird.collidesWith(bb);
       });
     });
-    var bbG ={
-      x: offsetX,
-      y: groundLevel,
-      w: game.SIZE[0],
-      h: game.SIZE[1]-groundLevel
-    };
     
-    bird.setTouching(bird.collidesWith(bbG));
-    
-    if ( bird.collidesWith(bbG) || collision ) {
+    if ( bird.getLowerBound() >= groundLevel || collision ) {
       score.resetPoints();
       bird.die();
       flash = true;
     }
-    
-    bird.drawBB(collision);
   }
   
   function addScoreIfPipePassed() {
@@ -181,10 +171,8 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     // last tick UNIX timestamp 
     lastTickTime : window.performance.now(),
 
-    // how far offset the canvas is
     getOffsetX: function() { return offsetX; },
-    
-    // functions
+    getGroundLevel: function() { return groundLevel; },
     init: init,
     tick: tick,
     render: render,

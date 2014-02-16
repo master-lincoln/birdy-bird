@@ -1,17 +1,18 @@
 define([], function() {
   "use strict";
   var game;
+  
+  // --- start values
   var position = {x:200, y:0};
+  var velocity = 1; // current y velocity
+  var alive = true;
+  
+  // --- constants
+  // circle with r=w and offset=(x,y) at current position
   var boundingBox = {x:6, y:10, w:28};
-  // current y velocity
-  var velocity = 1;
   var GRAVITY = 30;
   var JUMP_HEIGHT = 60;
   var MAX_VELOCITY = 200;
-  
-  var alive = true;
-  var touchingGround = false;
-  var drawB = false;
   
   function init(thegame) {
     game = thegame;
@@ -19,37 +20,32 @@ define([], function() {
   
   function tick(xMove, delta) {
     position.x += xMove;
-    if (!touchingGround) {
-      fallDown(delta);
-    }
+    fallDown(delta);
   }
   
   function fallDown(delta) {
-    // calculate position/velocity using the 'velocity verlet' integration
-    // http://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
-    var timeStep = delta/256;
-    position.y += timeStep * (velocity + timeStep * GRAVITY/2);
-    velocity   += timeStep * GRAVITY;
-    velocity = Math.min(MAX_VELOCITY, velocity);
-    
-    // keep him below top
+    // keep him below top and above bottom
     if ( position.y < -boundingBox.w/2 ) {
       position.y = -boundingBox.w/2;
       velocity = 0;
+    } else if (getLowerBound() >= game.getGroundLevel() && velocity>0) {
+      position.y = game.getGroundLevel()-boundingBox.w-boundingBox.y;
+      velocity = 0;
+    } else {
+      // calculate position/velocity using the 'velocity verlet' integration
+      // http://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
+      var timeStep = delta/256;
+      position.y += timeStep * (velocity + timeStep * GRAVITY/2);
+      velocity   += timeStep * GRAVITY;
+      velocity = Math.min(MAX_VELOCITY, velocity);
     }
-    
   }
   
   function jump() {
-    touchingGround = false;
     if (!alive)
       revive();
     
     velocity = -JUMP_HEIGHT;
-  }
-  
-  function drawBB(bool) {
-    drawB = bool;
   }
   
   // TODO externalize collision algorithm
@@ -88,12 +84,12 @@ define([], function() {
     return collision;
   }
   
-  function die() {
-    //alive = false;
+  function getLowerBound() { 
+    return position.y + boundingBox.y + boundingBox.w;
   }
   
-  function setTouching(touching) {
-    touchingGround = touching;
+  function die() {
+    alive = false;
   }
   
   function revive() {
@@ -108,19 +104,10 @@ define([], function() {
       return ~~(anim / 2) %3;
     };
     return function (ctx) {
-      var x = position.x;
-      var y = position.y;
-      var n = nextAnim();
-      game.drawImage('bird_'+n, x, y, ctx);
-      
-      // TODO delete this debugging code
-      /* draw translucent bounding box
-        var bb = boundingBox;
-        ctx.beginPath();
-        ctx.arc(x+bb.x+bb.w/2, y+bb.y+bb.w/2, bb.w/2, 0, 2*Math.PI, false);
-        ctx.fillStyle = drawB ? "rgba(200, 0, 0, 0.5)" : "rgba(0, 200, 0, 0.5)";
-        ctx.fill();
-      //*/
+      game.drawImage('bird_'+nextAnim(), 
+                     position.x,
+                     position.y,
+                     ctx);
     };
   })();
     
@@ -131,11 +118,10 @@ define([], function() {
     jump: jump,
     collidesWith: collidesWith,
     die: die,
-    setTouching: setTouching,
     revive: revive,
     isAlive: function() { return alive; },
-    drawBB: drawBB,
-    getPosition: function() { return position; }
+    getPosition: function() { return position; },
+    getLowerBound: getLowerBound
   };
   
 });
