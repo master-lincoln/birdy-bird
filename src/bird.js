@@ -19,13 +19,23 @@ define([], function() {
   function tick(xMove, delta) {
     position.x += xMove;
     if (!touchingGround) {
-      // calculate position and velocity using the 'velocity verlet' method
-      var timeStep = 1/ delta;
-      position.y += alive ? (timeStep * (velocity + timeStep * GRAVITY/2)) : 0;
-      // keep him below top
-      position.y = position.y < -boundingBox.w/2 ? -boundingBox.w/2 : position.y;
-      velocity   += timeStep * GRAVITY;
+      fallDown(delta);
     }
+  }
+  
+  function fallDown(delta) {
+    // calculate position/velocity using the 'velocity verlet' integration
+    // http://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
+    var timeStep = delta/256;
+    position.y += timeStep * (velocity + timeStep * GRAVITY/2);
+    velocity   += timeStep * GRAVITY;
+    
+    // keep him below top
+    if ( position.y < -boundingBox.w/2 ) {
+      position.y = -boundingBox.w/2;
+      velocity = 0;
+    }
+    
   }
   
   function jump() {
