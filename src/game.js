@@ -124,15 +124,14 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     });
   }
   
-  function tick() {
-    var moveX = game.tickTime/16;
+  function tick(delta) {
+    var moveX =delta/16;
     offsetX += moveX;
     
-    bird.tick(moveX);
+    bird.tick(moveX, delta);
     checkCollisions();
     addAndRemovePipes();
     addScoreIfPipePassed();
-    
   }
   
   function drawBG(ctx) {
@@ -162,7 +161,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
   function render(ctx) {
     ctx.save();
     drawBG(ctx);
-    ctx.translate(-offsetX, 0);
+    ctx.translate(-~~offsetX, 0);
 
     pipes.forEach(function(pipe) {
       pipe.draw(ctx);
@@ -178,9 +177,6 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
   
   return {
     SIZE : [640,480],
-    
-    // 16 ms (decrease to make game faster)
-    tickTime: ~~(1/60 *1000),
     
     // last tick UNIX timestamp 
     lastTickTime : window.performance.now(),

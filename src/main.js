@@ -29,21 +29,14 @@ require([
         jumpPressed = false;
     }
    }, false);
-
-  function tickPassed(time) {
-    var ticked = (time - game.lastTickTime) >= game.tickTime;
-    if (ticked) {
-      game.lastTickTime = time;
-    }
-    return ticked; 
-  }
   
   function mainLoop(time) {
-    if (tickPassed(time)) {
-      game.tick();
-      game.render(ctx);
-          
-    }
+    var delta = time - game.lastTickTime;
+    game.lastTickTime = time;
+    
+    game.tick(delta);
+    game.render(ctx);
+
     window.requestAnimationFrame(mainLoop);
   }
 

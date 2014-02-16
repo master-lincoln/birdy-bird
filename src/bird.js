@@ -16,11 +16,11 @@ define([], function() {
     game = thegame;
   }
   
-  function tick(xMove) {
+  function tick(xMove, delta) {
     position.x += xMove;
     if (!touchingGround) {
       // calculate position and velocity using the 'velocity verlet' method
-      var timeStep = 1/ game.tickTime;
+      var timeStep = 1/ delta;
       position.y += alive ? (timeStep * (velocity + timeStep * GRAVITY/2)) : 0;
       // keep him below top
       position.y = position.y < -boundingBox.w/2 ? -boundingBox.w/2 : position.y;
