@@ -12,6 +12,11 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
   
   var flash = false;
   
+  var bgCanvas = document.createElement('canvas');
+  bgCanvas.width = 640;
+  bgCanvas.height = 480;
+  var bgCtx = bgCanvas.getContext('2d');
+  
   function drawImage(name, x, y, ctx) {
     var el = atlasMap[name];
     if (el) {
@@ -60,7 +65,13 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     pipes.push(new Pipe(game));
     pipes.push(new Pipe(game));
     
-    return Promise.all([promMap, promImg]).then(parseAtlasMap);
+    return Promise.all([promMap, promImg])
+                  .then(parseAtlasMap)
+                  .then(function() {
+                    drawImage("bg", 0, 0, bgCtx);
+                    drawImage("bg", 288, 0, bgCtx);
+                    drawImage("bg", 2*288, 0, bgCtx); 
+                  });
   }
   
   function addAndRemovePipes() {
@@ -125,9 +136,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
   }
   
   function drawBG(ctx) {
-    drawImage("bg", 0, 0, ctx);
-    drawImage("bg", 288, 0, ctx);
-    drawImage("bg", 2*288, 0, ctx);
+    ctx.drawImage(bgCanvas, 0, 0);
   }
   
   function drawGround(ctx) {
@@ -171,7 +180,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     SIZE : [640,480],
     
     // 16 ms (decrease to make game faster)
-    tickTime: ~~(1/30 *1000),
+    tickTime: ~~(1/60 *1000),
     
     // last tick UNIX timestamp 
     lastTickTime : window.performance.now(),
