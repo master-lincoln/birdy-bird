@@ -23,7 +23,7 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
   function drawImage(name, x, y, ctx) {
     var el = atlasMap[name];
     if (el) {
-      ctx.drawImage(atlas, el.x, el.y, el.w, el.h, x, y, el.w, el.h);
+      ctx.drawImage(atlas, el.x, el.y, el.w, el.h, ~~x, ~~y, el.w, el.h);
     } else {
       console.error("Couldn't find '%s' in atlas", name);
     }
