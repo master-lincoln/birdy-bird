@@ -12,6 +12,7 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
   
   var flash = false;
   var showIntroScreen = true;
+  var levelPassed = false;
   
   var bgCanvas = document.createElement('canvas');
   bgCanvas.width = 640;
@@ -106,6 +107,7 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
     
     if ( bird.getLowerBound() >= groundLevel || collision ) {
       score.resetPoints();
+      difficulty.reset();
       bird.die();
       flash = true;
     }
@@ -118,6 +120,10 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
            pipeRightOuter <bird.getPosition().x) {
         pipe.passed = true;
         score.addPoint();
+        if ( difficulty.qualifiedForNextLevel(score.getPoints()) ) {
+          difficulty.advanceLevel();
+          levelPassed = true;
+        }
       }
     });
   }
@@ -155,6 +161,29 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
         ctx.fill();
         drawImage('text_game_over', 220, 200, ctx);
         flash = false;
+      }
+    };
+  })();
+  
+  var drawNextLevelText = (function() {
+    var frame = 0;
+    var maxFrames = 20;
+    return function(ctx) {
+      if (frame < maxFrames) {
+        ctx.save();
+        var fontSize = ~~(20+10*frame/maxFrames);
+        ctx.font = ""+fontSize+"px 'Press Start 2P'";
+        ctx.fillStyle = "white";
+        ctx.textAlign = 'center';
+        ctx.fillText("Next Level!", game.SIZE[0]/2, game.SIZE[1]/2);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'black';
+        ctx.strokeText("Next Level!", game.SIZE[0]/2, game.SIZE[1]/2);
+        ctx.restore();
+        frame++;
+      } else {
+        levelPassed = false;
+        frame = 0;
       }
     };
   })();
@@ -201,8 +230,11 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
     score.draw(ctx);
     flashScreen(ctx);
     
-    if ( showIntroScreen )
+    if (showIntroScreen)
       drawIntroScreen(ctx);
+    
+    if (levelPassed)
+      drawNextLevelText(ctx);
   }
   
   return {
