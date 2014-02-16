@@ -7,6 +7,7 @@ define([], function() {
   var velocity = 1;
   var GRAVITY = 30;
   var JUMP_HEIGHT = 60;
+  var MAX_VELOCITY = 200;
   
   var alive = true;
   var touchingGround = false;
@@ -29,6 +30,7 @@ define([], function() {
     var timeStep = delta/256;
     position.y += timeStep * (velocity + timeStep * GRAVITY/2);
     velocity   += timeStep * GRAVITY;
+    velocity = Math.min(MAX_VELOCITY, velocity);
     
     // keep him below top
     if ( position.y < -boundingBox.w/2 ) {
