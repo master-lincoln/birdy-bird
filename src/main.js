@@ -11,24 +11,29 @@ require([
   can.focus();
     
   var jumpPressed = false;
+  var correctEvent = function(e) {
+    return (e.keyCode === 32 || e instanceof MouseEvent || e instanceof TouchEvent);
+  }
     
-  var jumpHandler = function() { bird.jump(); };
-    
-  can.addEventListener("touchstart", jumpHandler, false);
-  can.addEventListener("mousedown", jumpHandler, false);
-    
-  can.addEventListener('keydown', function(e) {
-      if (e.keyCode === 32 && !jumpPressed) { // space
-        jumpPressed = true;
-          bird.jump();
-      }
-  }, false);
-    
-   can.addEventListener('keyup', function(e) {
-    if (e.keyCode === 32) { // space
-        jumpPressed = false;
+  var pressHandler = function(e) {
+    if (correctEvent(e) && !jumpPressed) {
+      e.preventDefault();
+      jumpPressed = true;
+      bird.jump();
     }
-   }, false);
+  };
+  var releaseHandler = function(e) {
+    if (correctEvent(e)) {
+      jumpPressed = false;
+    }
+  };
+    
+  can.addEventListener("touchstart", pressHandler, false);
+  can.addEventListener("touchend", releaseHandler, false);
+  can.addEventListener("mousedown", pressHandler, false);
+  can.addEventListener("mouseup", releaseHandler, false);
+  can.addEventListener('keydown', pressHandler, false);
+  can.addEventListener('keyup', releaseHandler, false);
   
   function mainLoop(time) {
     var delta = time - game.lastTickTime;
