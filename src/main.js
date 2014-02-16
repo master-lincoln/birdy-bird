@@ -13,13 +13,13 @@ require([
   var jumpPressed = false;
   var correctEvent = function(e) {
     return (e.keyCode === 32 || e instanceof MouseEvent || e instanceof TouchEvent);
-  }
+  };
     
   var pressHandler = function(e) {
     if (correctEvent(e) && !jumpPressed) {
       e.preventDefault();
       jumpPressed = true;
-      bird.jump();
+      game.triggerInput();
     }
   };
   var releaseHandler = function(e) {

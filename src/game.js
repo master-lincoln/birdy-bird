@@ -11,6 +11,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
   var pipes = [];
   
   var flash = false;
+  var showIntroScreen = true;
   
   var bgCanvas = document.createElement('canvas');
   bgCanvas.width = 640;
@@ -74,6 +75,13 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
                   });
   }
   
+  function triggerInput() {
+   if (showIntroScreen)
+     showIntroScreen = false;
+    else
+      bird.jump();
+  }
+  
   function addAndRemovePipes() {
     var lastPipe = pipes[pipes.length-1];
     // add new pipe at the end
@@ -115,13 +123,15 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
   }
   
   function tick(delta) {
-    var moveX =delta/16;
-    offsetX += moveX;
-    
-    bird.tick(moveX, delta);
-    checkCollisions();
-    addAndRemovePipes();
-    addScoreIfPipePassed();
+    if ( !showIntroScreen ) {
+      var moveX =delta/16;
+      offsetX += moveX;
+
+      bird.tick(moveX, delta);
+      checkCollisions();
+      addAndRemovePipes();
+      addScoreIfPipePassed();
+    }
   }
   
   function drawBG(ctx) {
@@ -148,6 +158,31 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     };
   })();
   
+  function drawIntroScreen(ctx) {
+    var p = {x: 80, y:20, h:50, w:280};
+    // arrow
+    ctx.fillStyle = "red";
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 3;
+    
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y+p.h/2);
+    ctx.lineTo(p.x+20, p.y);
+    ctx.lineTo(p.x+p.w, p.y);
+    ctx.lineTo(p.x+p.w, p.y+p.h);
+    ctx.lineTo(p.x+20, p.y+p.h);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fill();
+    
+    ctx.font = "12px 'Press Start 2P'";
+    ctx.fillStyle = "white";
+    ctx.fillText("your current points", p.x+30, p.y+20);
+    ctx.fillText("and highscore", p.x+30, p.y+20+20);
+    
+    drawImage('tutorial', 200, 200, ctx);
+  }
+  
   function render(ctx) {
     ctx.save();
     drawBG(ctx);
@@ -157,12 +192,16 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
       pipe.draw(ctx);
     });
     
-    bird.draw(ctx);
+    if (!showIntroScreen)
+      bird.draw(ctx);
     
     ctx.restore();
     drawGround(ctx);
     score.draw(ctx);
     flashScreen(ctx);
+    
+    if ( showIntroScreen )
+      drawIntroScreen(ctx);
   }
   
   return {
@@ -176,6 +215,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     init: init,
     tick: tick,
     render: render,
+    triggerInput: triggerInput,
     drawImage: drawImage
   };
 });
