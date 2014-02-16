@@ -10,6 +10,7 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
   
   var pipes = [];
   
+  var drawFps = (location.hash.indexOf('fps') !== -1);
   var flash = false;
   var showIntroScreen = true;
   var levelPassed = false;
@@ -213,7 +214,7 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
     drawImage('tutorial', 200, 200, ctx);
   }
   
-  function render(ctx) {
+  function render(ctx, delta) {
     ctx.save();
     drawBG(ctx);
     ctx.translate(-~~offsetX, 0);
@@ -235,6 +236,13 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
     
     if (levelPassed)
       drawNextLevelText(ctx);
+    
+    if (drawFps) {
+      var fps = ~~(1000 / delta);
+      ctx.font = "10px sans-serif";
+      ctx.fillStyle = "black";
+      ctx.fillText(fps.toString(), game.SIZE[0]-20, 10);
+    }
   }
   
   return {

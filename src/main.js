@@ -40,7 +40,7 @@ require([
     game.lastTickTime = time;
     
     game.tick(delta);
-    game.render(ctx);
+    game.render(ctx, delta);
 
     window.requestAnimationFrame(mainLoop);
   }
