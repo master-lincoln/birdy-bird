@@ -22,7 +22,7 @@ define([], function() {
     },
     {
       minPoints: 15,
-      pipeDistance: 200,
+      pipeDistance: 210,
       pipeGap: 100,
       speed: 2.2
     }
