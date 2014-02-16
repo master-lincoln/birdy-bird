@@ -12,7 +12,7 @@ define(['difficulty'], function(difficulty) {
     this.gap = difficulty.getPipeGap();
     var newX = lastX + difficulty.getPipeDistance();
     lastX = newX;
-    this.position = {x:newX, y:Math.random()*250+150};
+    this.position = {x:newX, y:Math.random()*170+250};
   };
   
   Pipe.prototype.tick = function() {  };
