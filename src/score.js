@@ -1,4 +1,4 @@
-define([], function() {
+define(['difficulty'], function(difficulty) {
   "use strict";
   
   var points = 0;
@@ -28,6 +28,7 @@ define([], function() {
   }
   
   function resetPoints() {
+    difficulty.reset();
     points = 0;
   }
   
@@ -37,6 +38,7 @@ define([], function() {
       maxPoints = points;
       save(maxPoints);
     }
+    difficulty.setLevel(points);
   }
   
   function save() {

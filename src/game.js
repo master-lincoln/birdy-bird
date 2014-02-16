@@ -1,4 +1,4 @@
-define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pipe, score) {
+define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], function(bird, Pipe, score, difficulty) {
   "use strict";
   
   var offsetX = 0;
@@ -124,7 +124,7 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
   
   function tick(delta) {
     if ( !showIntroScreen ) {
-      var moveX =delta/16;
+      var moveX = delta/16 * difficulty.getSpeedFactor();
       offsetX += moveX;
 
       bird.tick(moveX, delta);
@@ -149,11 +149,12 @@ define(['bird', 'pipe', 'score', '../lib/promise-0.1.1.min'], function(bird, Pip
     var frames = 3;
     return function(ctx) {
       if (flash) {
-          ctx.beginPath();
-          ctx.rect(0,0,game.SIZE[0], game.SIZE[1]);
-          ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
-          ctx.fill();
-          flash = false;
+        ctx.beginPath();
+        ctx.rect(0,0,game.SIZE[0], game.SIZE[1]);
+        ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
+        ctx.fill();
+        drawImage('text_game_over', 220, 200, ctx);
+        flash = false;
       }
     };
   })();
