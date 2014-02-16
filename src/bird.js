@@ -10,7 +10,7 @@ define([], function() {
   // --- constants
   // circle with r=w and offset=(x,y) at current position
   var boundingBox = {x:6, y:10, w:28};
-  var GRAVITY = 30;
+  var GRAVITY = 35;
   var JUMP_HEIGHT = 60;
   var MAX_VELOCITY = 200;
   

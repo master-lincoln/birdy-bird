@@ -16,15 +16,21 @@ define([], function() {
     },
     {
       minPoints: 8,
-      pipeDistance: 210,
+      pipeDistance: 220,
       pipeGap: 110,
-      speed: 2
+      speed: 2.2
     },
     {
       minPoints: 15,
-      pipeDistance: 210,
-      pipeGap: 100,
-      speed: 2.2
+      pipeDistance: 220,
+      pipeGap: 90,
+      speed: 2.8
+    },
+    {
+      minPoints: 30,
+      pipeDistance: 220,
+      pipeGap: 80,
+      speed: 3.2
     }
   ];
   
