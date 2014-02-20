@@ -67,8 +67,6 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
     score.init(game);
     bird.init(game);
     pipes.push(new Pipe(game));
-    pipes.push(new Pipe(game));
-    pipes.push(new Pipe(game));
     
     return Promise.all([promMap, promImg])
                   .then(parseAtlasMap)
@@ -257,8 +255,6 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
     score.resetPoints();
     bird.reset();
     Pipe.reset();
-    pipes.push(new Pipe(game));
-    pipes.push(new Pipe(game));
     pipes.push(new Pipe(game));
     showIntroScreen = true;
   }
