@@ -16,6 +16,13 @@ define([], function() {
   
   function init(thegame) {
     game = thegame;
+    
+    /** Converts numeric degrees to radians */
+    if (typeof(Number.prototype.toRad) === "undefined") {
+      Number.prototype.toRad = function() {
+        return this * Math.PI / 180;
+      };
+    }
   }
   
   function tick(xMove, delta) {
@@ -104,10 +111,20 @@ define([], function() {
       return ~~(anim / 2) %3;
     };
     return function (ctx) {
-      game.drawImage('bird_'+nextAnim(), 
-                     position.x,
-                     position.y,
-                     ctx);
+      
+      var angle = (velocity+JUMP_HEIGHT)*          // move velocity so it starts at 0
+                  135/(MAX_VELOCITY+JUMP_HEIGHT) - // normalize by using ratio 'angles range'/'speedrange'
+                  45,                              // and move 0 to 45 degree counterclockwise
+                                                        
+          offX = boundingBox.x + boundingBox.w/2,
+          offY = boundingBox.y + boundingBox.w/2;
+      
+      ctx.save();
+      ctx.translate(position.x+offX, position.y+offY);
+      ctx.rotate(angle.toRad());
+      ctx.translate(-offX, -offY);
+      game.drawImage('bird_'+nextAnim(), 0, 0, ctx);
+      ctx.restore();
     };
   })();
   
