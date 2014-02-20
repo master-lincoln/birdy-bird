@@ -82,7 +82,10 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
   function triggerInput() {
    if (showIntroScreen)
      showIntroScreen = false;
-    else
+    else if (flash) {
+      flash = false;
+      reset();
+    } else
       bird.jump();
   }
   
@@ -113,6 +116,8 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
       difficulty.reset();
       bird.die();
       flash = true;
+    } else {
+      flash = false;
     }
   }
   
@@ -163,7 +168,6 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
         ctx.fillStyle = "rgba(200, 0, 0, 0.5)";
         ctx.fill();
         drawImage('text_game_over', 220, 200, ctx);
-        flash = false;
       }
     };
   })();
@@ -247,6 +251,18 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
     }
   }
   
+  function reset() {
+    offsetX = 0;
+    pipes = [];
+    score.resetPoints();
+    bird.reset();
+    Pipe.reset();
+    pipes.push(new Pipe(game));
+    pipes.push(new Pipe(game));
+    pipes.push(new Pipe(game));
+    showIntroScreen = true;
+  }
+  
   return {
     SIZE : [640,480],
     
@@ -256,6 +272,7 @@ define(['bird', 'pipe', 'score', 'difficulty', '../lib/promise-0.1.1.min'], func
     getOffsetX: function() { return offsetX; },
     getGroundLevel: function() { return groundLevel; },
     init: init,
+    reset: reset,
     tick: tick,
     render: render,
     triggerInput: triggerInput,

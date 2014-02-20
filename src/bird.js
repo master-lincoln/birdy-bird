@@ -110,9 +110,16 @@ define([], function() {
                      ctx);
     };
   })();
+  
+  function reset() {
+    position = {x:200, y:0};
+    velocity = 1; // current y velocity
+    alive = true;
+  }
     
   return {
     init: init,
+    reset: reset,
     draw: draw,
     tick: tick,
     jump: jump,

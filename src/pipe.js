@@ -41,6 +41,10 @@ define(['difficulty'], function(difficulty) {
     this.game.drawImage('pipe_up', x, y, ctx);
     this.game.drawImage('pipe_down', x, y-this.gap-this.height, ctx);
   };
+  
+  Pipe.reset = function () {
+    lastX = 250;
+  };
     
   return Pipe;
   
